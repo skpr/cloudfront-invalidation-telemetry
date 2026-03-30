@@ -1,0 +1,30 @@
+name: ☁️ Publish Artifacts
+
+on:
+  push:
+    tags:
+      - v1.*
+
+jobs:
+  artifacts:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: ⬇️ Git clone the repository
+        uses: actions/checkout@v3
+
+      - name: 📦 Install Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.23'
+
+      - name: 📦 Build package
+        run: make package
+
+      - name: ☁️ Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: lambda-handler.zip
