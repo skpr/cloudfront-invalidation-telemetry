@@ -130,7 +130,8 @@ func run(ctx context.Context, logger *yolog.Logger, cloudfrontClient cloudfrontc
 		return logger.WrapError(err)
 	}
 
-	timeAgo := time.Now().Add(-window)
+	now := time.Now()
+	timeAgo := now.Add(-window)
 
 	for _, distribution := range distributions.DistributionList.Items {
 		tags, err := cloudfrontClient.ListTagsForResource(ctx, &cloudfront.ListTagsForResourceInput{
@@ -154,6 +155,10 @@ func run(ctx context.Context, logger *yolog.Logger, cloudfrontClient cloudfrontc
 			logs    []cloudwatchlogstypes.InputLogEvent
 		)
 
+		for t := timeAgo.Truncate(time.Minute); !t.After(now); t = t.Add(time.Minute) {
+			buckets[t] = &MetricBucket{}
+		}
+
 		for _, invalidation := range invalidations.InvalidationList.Items {
 			if !timeAgo.Before(*invalidation.CreateTime) {
 				continue
@@ -169,9 +174,6 @@ func run(ctx context.Context, logger *yolog.Logger, cloudfrontClient cloudfrontc
 
 			if invalidationDetail != nil {
 				bucket := invalidation.CreateTime.Truncate(time.Minute)
-				if _, ok := buckets[bucket]; !ok {
-					buckets[bucket] = &MetricBucket{}
-				}
 
 				buckets[bucket].Invalidations++
 				buckets[bucket].Paths += float64(*invalidationDetail.Invalidation.InvalidationBatch.Paths.Quantity)

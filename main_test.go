@@ -198,15 +198,12 @@ func TestRunMetricBucketing(t *testing.T) {
 	err = run(ctx(), logger, cfClient, nil, metricsClient, 10*time.Minute)
 	assert.NoError(t, err)
 
-	assert.Equal(t, 4, len(cwMock.MetricData))
+	assert.Equal(t, 22, len(cwMock.MetricData))
 
-	bucketCounts := make(map[time.Time]int)
-	for _, m := range cwMock.MetricData {
-		bucketCounts[*m.Timestamp]++
-	}
-
-	assert.Equal(t, 2, bucketCounts[minute1])
-	assert.Equal(t, 2, bucketCounts[minute2])
+	assertMetricData(t, cwMock, minute1, CloudWatchMetricInvalidationRequest, 2, true)
+	assertMetricData(t, cwMock, minute1, CloudWatchMetricInvalidationPathCount, 4, true)
+	assertMetricData(t, cwMock, minute2, CloudWatchMetricInvalidationRequest, 1, true)
+	assertMetricData(t, cwMock, minute2, CloudWatchMetricInvalidationPathCount, 2, true)
 }
 
 func TestRunNoLogsWithoutTags(t *testing.T) {
@@ -241,7 +238,7 @@ func TestRunNoLogsWithoutTags(t *testing.T) {
 	err = run(ctx(), logger, cfClient, nil, metricsClient, 10*time.Minute)
 	assert.NoError(t, err)
 
-	assert.Equal(t, 2, len(cwMock.MetricData))
+	assert.Equal(t, 22, len(cwMock.MetricData))
 }
 
 func TestRunSkipsOldInvalidations(t *testing.T) {
@@ -276,7 +273,26 @@ func TestRunSkipsOldInvalidations(t *testing.T) {
 	err = run(ctx(), logger, cfClient, nil, metricsClient, 5*time.Minute)
 	assert.NoError(t, err)
 
-	assert.Equal(t, 0, len(cwMock.MetricData))
+	assert.Equal(t, 12, len(cwMock.MetricData))
+
+	assertMetricData(t, cwMock, old, CloudWatchMetricInvalidationRequest, 0, false)
+	assertMetricData(t, cwMock, old, CloudWatchMetricInvalidationPathCount, 0, false)
+}
+
+// assertMetricData checks if a metric with the given name and timestamp exists in the mock client and has the expected value.
+func assertMetricData(t *testing.T, m *cloudwatchclient.MockClient, timestamp time.Time, metricName string, expectedValue float64, expectedExists bool) {
+	for _, m := range m.MetricData {
+		if *m.MetricName == metricName && time.Time.Equal(*m.Timestamp, timestamp.Truncate(time.Minute)) {
+			if !expectedExists {
+				assert.Fail(t, "metric shouldn't exist")
+			}
+			assert.Equal(t, expectedValue, *m.Value)
+			return
+		}
+	}
+	if expectedExists {
+		assert.Fail(t, "metric not found")
+	}
 }
 
 func ctx() context.Context {
