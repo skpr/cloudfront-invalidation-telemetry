@@ -5,10 +5,9 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	"github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
 	"github.com/aws/smithy-go/middleware"
-
-	"github.com/aws/aws-sdk-go-v2/service/cloudfront"
 )
 
 // ClientInterface is a mock cloudfront client.

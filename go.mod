@@ -1,6 +1,6 @@
 module github.com/skpr/cloudfront-invalidation-telemetry
 
-go 1.25.5
+go 1.26
 
 require (
 	github.com/aws/aws-lambda-go v1.47.0

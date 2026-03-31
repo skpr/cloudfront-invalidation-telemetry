@@ -15,10 +15,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	cloudwatchlogstypes "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs/types"
 	"github.com/caarlos0/env/v11"
+	"github.com/skpr/yolog"
 
 	cloudfrontclient "github.com/skpr/cloudfront-invalidation-telemetry/internal/aws/cloudfront"
 	"github.com/skpr/cloudfront-invalidation-telemetry/internal/metrics"
-	"github.com/skpr/yolog"
 )
 
 const (
@@ -176,9 +176,7 @@ func run(ctx context.Context, logger *yolog.Logger, cloudfrontClient cloudfrontc
 						PathCount:      *invalidationDetail.Invalidation.InvalidationBatch.Paths.Quantity,
 					}
 
-					for _, path := range invalidationDetail.Invalidation.InvalidationBatch.Paths.Items {
-						message.Paths = append(message.Paths, path)
-					}
+					message.Paths = append(message.Paths, invalidationDetail.Invalidation.InvalidationBatch.Paths.Items...)
 
 					logMessage, err := json.Marshal(message)
 					if err != nil {
