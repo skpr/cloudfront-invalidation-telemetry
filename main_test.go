@@ -177,7 +177,7 @@ func TestRunMetricBucketing(t *testing.T) {
 			{Id: aws.String("inv-3"), Status: aws.String("Completed"), CreateTime: aws.Time(minute2.Add(30 * time.Second))},
 		},
 		invalidation: &types.Invalidation{
-			CreateTime: aws.Time(now),
+			CreateTime: aws.Time(minute1),
 			Id:         aws.String("inv-detail"),
 			InvalidationBatch: &types.InvalidationBatch{
 				Paths: &types.Paths{
