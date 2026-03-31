@@ -47,7 +47,7 @@ type LogConfig struct {
 
 // Enabled returns true if both the log group and stream names are set.
 func (c LogConfig) Enabled() bool {
-	return c.GroupName != "" && c.StreamName != ""
+	return c.GroupName != ""
 }
 
 // getLogConfig extracts the log group and stream names from CloudFront distribution tags.
@@ -61,6 +61,10 @@ func getLogConfig(tags *cloudfront.ListTagsForResourceOutput) LogConfig {
 		case TagLogsStreamName:
 			config.StreamName = *tag.Value
 		}
+	}
+
+	if config.StreamName == "" {
+		config.StreamName = "cloudfront-invalidations"
 	}
 
 	return config

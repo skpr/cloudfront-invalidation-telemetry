@@ -36,7 +36,7 @@ func TestLogConfigEnabled(t *testing.T) {
 		{
 			name:     "MissingStreamName",
 			config:   LogConfig{GroupName: "/aws/cloudfront/test"},
-			expected: false,
+			expected: true,
 		},
 		{
 			name:     "BothEmpty",
@@ -79,7 +79,7 @@ func TestGetLogConfig(t *testing.T) {
 					},
 				},
 			},
-			expected: LogConfig{GroupName: "/aws/cloudfront/prod"},
+			expected: LogConfig{GroupName: "/aws/cloudfront/prod", StreamName: "cloudfront-invalidations"},
 		},
 		{
 			name: "OnlyStreamTag",
@@ -101,7 +101,7 @@ func TestGetLogConfig(t *testing.T) {
 					},
 				},
 			},
-			expected: LogConfig{},
+			expected: LogConfig{StreamName: "cloudfront-invalidations"},
 		},
 		{
 			name: "EmptyTags",
@@ -110,7 +110,7 @@ func TestGetLogConfig(t *testing.T) {
 					Items: []types.Tag{},
 				},
 			},
-			expected: LogConfig{},
+			expected: LogConfig{StreamName: "cloudfront-invalidations"},
 		},
 	}
 
