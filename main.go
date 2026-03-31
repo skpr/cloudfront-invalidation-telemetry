@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"os"
 	"sort"
 	"time"
@@ -233,6 +234,18 @@ func run(ctx context.Context, logger *yolog.Logger, cloudfrontClient cloudfrontc
 		}
 
 		if len(logs) > 0 {
+			_, err := logsClient.CreateLogStream(ctx, &cloudwatchlogs.CreateLogStreamInput{
+				LogGroupName:  aws.String(logConfig.GroupName),
+				LogStreamName: aws.String(logConfig.StreamName),
+			})
+			if err != nil {
+				var existsError *cloudwatchlogstypes.ResourceAlreadyExistsException
+
+				if !errors.As(err, &existsError) {
+					return logger.WrapError(err)
+				}
+			}
+
 			sort.Slice(logs, func(i, j int) bool {
 				return *logs[i].Timestamp < *logs[j].Timestamp
 			})
