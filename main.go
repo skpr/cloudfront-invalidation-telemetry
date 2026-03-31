@@ -173,6 +173,9 @@ func run(ctx context.Context, logger *yolog.Logger, cloudfrontClient cloudfrontc
 
 			if invalidationDetail != nil {
 				bucket := invalidation.CreateTime.Truncate(time.Minute)
+				if _, ok := buckets[bucket]; !ok {
+					buckets[bucket] = &MetricBucket{}
+				}
 
 				buckets[bucket].Invalidations++
 				buckets[bucket].Paths += float64(*invalidationDetail.Invalidation.InvalidationBatch.Paths.Quantity)
