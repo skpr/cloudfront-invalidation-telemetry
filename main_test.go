@@ -9,12 +9,12 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	"github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
 	"github.com/aws/smithy-go/middleware"
+	"github.com/skpr/yolog"
 	"github.com/stretchr/testify/assert"
 
 	cloudfrontclient "github.com/skpr/cloudfront-invalidation-telemetry/internal/aws/cloudfront"
 	cloudwatchclient "github.com/skpr/cloudfront-invalidation-telemetry/internal/aws/cloudwatch"
 	"github.com/skpr/cloudfront-invalidation-telemetry/internal/metrics"
-	"github.com/skpr/yolog"
 )
 
 func TestLogConfigEnabled(t *testing.T) {
@@ -124,7 +124,7 @@ func TestGetLogConfig(t *testing.T) {
 // mockCloudFrontClient allows configuring responses per test.
 type mockCloudFrontClient struct {
 	cloudfrontclient.MockClient
-	tags         *cloudfront.ListTagsForResourceOutput
+	tags          *cloudfront.ListTagsForResourceOutput
 	invalidations []types.InvalidationSummary
 	invalidation  *types.Invalidation
 }
