@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"os"
+	"sort"
 	"time"
 
 	"github.com/aws/aws-lambda-go/lambda"
@@ -228,6 +229,10 @@ func run(ctx context.Context, logger *yolog.Logger, cloudfrontClient cloudfrontc
 		}
 
 		if len(logs) > 0 {
+			sort.Slice(logs, func(i, j int) bool {
+				return *logs[i].Timestamp < *logs[j].Timestamp
+			})
+
 			_, err = logsClient.PutLogEvents(ctx, &cloudwatchlogs.PutLogEventsInput{
 				LogGroupName:  aws.String(logConfig.GroupName),
 				LogStreamName: aws.String(logConfig.StreamName),
