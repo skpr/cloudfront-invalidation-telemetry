@@ -14,7 +14,7 @@ A Lambda for extracting invalidation metrics and logs from a CloudFront distribu
 
 Logging if configured by adding the following tags to the CloudFront distribution.
 
-| Name                                                    | Description                                                                      |
-|---------------------------------------------------------|----------------------------------------------------------------------------------|
-| `skpr.io/cloudfront-invalidation-telemetry/logs/group`  | The CloudWatch Logs group which will receive logged invalidation requests        |
-| `skpr.io/cloudfront-invalidation-telemetry/logs/stream` | The CloudWatch Logs group stream which will receive logged invalidation requests |
+| Name                                                    | Description                                                                      | Default                  |
+|---------------------------------------------------------|----------------------------------------------------------------------------------|--------------------------|
+| `skpr.io/cloudfront-invalidation-telemetry/logs/group`  | The CloudWatch Logs group which will receive logged invalidation requests        |                          |
+| `skpr.io/cloudfront-invalidation-telemetry/logs/stream` | The CloudWatch Logs group stream which will receive logged invalidation requests | cloudfront-invalidations |
