@@ -154,7 +154,7 @@ func run(ctx context.Context, logger *yolog.Logger, cloudfrontClient cloudfrontc
 			logs    []cloudwatchlogstypes.InputLogEvent
 		)
 
-		for t := timeAgo.Truncate(time.Minute); !t.After(time.Now()); t = t.Add(time.Minute) {
+		for t := timeAgo.UTC().Truncate(time.Minute); !t.After(time.Now()); t = t.Add(time.Minute) {
 			buckets[t] = &MetricBucket{}
 		}
 
@@ -172,10 +172,7 @@ func run(ctx context.Context, logger *yolog.Logger, cloudfrontClient cloudfrontc
 			}
 
 			if invalidationDetail != nil {
-				bucket := invalidation.CreateTime.Truncate(time.Minute)
-				if _, ok := buckets[bucket]; !ok {
-					buckets[bucket] = &MetricBucket{}
-				}
+				bucket := invalidation.CreateTime.UTC().Truncate(time.Minute)
 
 				buckets[bucket].Invalidations++
 				buckets[bucket].Paths += float64(*invalidationDetail.Invalidation.InvalidationBatch.Paths.Quantity)

@@ -172,9 +172,9 @@ func TestRunMetricBucketing(t *testing.T) {
 			Tags: &types.Tags{Items: []types.Tag{}},
 		},
 		invalidations: []types.InvalidationSummary{
-			{Id: aws.String("inv-1"), Status: aws.String("Completed"), CreateTime: aws.Time(minute1.Add(10 * time.Second))},
-			{Id: aws.String("inv-2"), Status: aws.String("Completed"), CreateTime: aws.Time(minute1.Add(20 * time.Second))},
-			{Id: aws.String("inv-3"), Status: aws.String("Completed"), CreateTime: aws.Time(minute2.Add(30 * time.Second))},
+			{Id: aws.String("inv-1"), Status: aws.String("Completed"), CreateTime: aws.Time(minute1.UTC().Add(10 * time.Second))},
+			{Id: aws.String("inv-2"), Status: aws.String("Completed"), CreateTime: aws.Time(minute1.UTC().Add(20 * time.Second))},
+			{Id: aws.String("inv-3"), Status: aws.String("Completed"), CreateTime: aws.Time(minute2.UTC().Add(30 * time.Second))},
 		},
 		invalidation: &types.Invalidation{
 			CreateTime: aws.Time(minute1),
