@@ -198,7 +198,14 @@ func run(ctx context.Context, logger *yolog.Logger, cloudfrontClient cloudfrontc
 			}
 		}
 
-		logger.SetAttr(*distribution.Id, buckets)
+		// Log only non-zero buckets
+		nonZeroBuckets := make(map[time.Time]*MetricBucket)
+		for bucket, counts := range buckets {
+			if counts.Invalidations > 0 || counts.Paths > 0 {
+				nonZeroBuckets[bucket] = counts
+			}
+		}
+		logger.SetAttr(*distribution.Id, nonZeroBuckets)
 
 		for bucket, counts := range buckets {
 			err = metricsClient.Add(cloudwatchtypes.MetricDatum{
